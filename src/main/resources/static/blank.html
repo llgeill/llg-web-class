@@ -27,6 +27,7 @@
     <link href="vendors/pace-progress/css/pace.min.css" rel="stylesheet">
     <!-- Global site tag (gtag.js) - Google Analytics-->
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
 
@@ -366,7 +367,7 @@
               <i class="icon-plus icons font-1xl   float-right" ><span style="padding-left: 8px;color: gray">新增</span></i>
             </div>
             <div class="card-body">
-              <table class="table table-responsive-sm table-bordered">
+              <table class="table table-responsive-sm table-bordered" id="tableData">
                 <thead>
                 <tr>
                   <th><input type="checkbox"></th>
@@ -377,61 +378,16 @@
                   <th>操作</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody  v-for="(item, index) in items">
                 <tr>
-                  <td><input type="checkbox">#1</td>
-                  <td>Pompeius René</td>
-                  <td>2012/01/01</td>
-                  <td>教师</td>
-                  <td><span class="badge badge-success">激活</span></td>
+                  <td><input type="checkbox">#{{index+1}}</td>
+                  <td>{{item.username}}</td>
+                  <td>{{item.date}}</td>
+                  <td>{{item.role}}</td>
+                  <td><span class="badge badge-success">{{item.status}}</span></td>
                   <td>
-                        <button class="btn btn-info active" type="button" aria-pressed="true"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
-                        <button class="btn btn-danger active" type="button" aria-pressed="true"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
-                  </td>
-
-                </tr>
-                <tr>
-                  <td><input type="checkbox">#2</td>
-                  <td>Paĉjo Jadon</td>
-                  <td>2012/02/01</td>
-                  <td>学生</td>
-                  <td><span class="badge badge-success">激活</span></td>
-                  <td>
-                    <button class="btn btn-info active" type="button" aria-pressed="true"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
-                    <button class="btn btn-danger active" type="button" aria-pressed="true"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox">#3</td>
-                  <td>Micheal Mercurius</td>
-                  <td>2012/02/01</td>
-                  <td>学生</td>
-                  <td><span class="badge badge-success">激活</span></td>
-                  <td>
-                    <button class="btn btn-info active" type="button" aria-pressed="true"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
-                    <button class="btn btn-danger active" type="button" aria-pressed="true"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox">#4</td>
-                  <td>Ganesha Dubhghall</td>
-                  <td>2012/03/01</td>
-                  <td>学生</td>
-                  <td><span class="badge badge-success">激活</span></td>
-                  <td>
-                    <button class="btn btn-info active" type="button" aria-pressed="true"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
-                    <button class="btn btn-danger active" type="button" aria-pressed="true"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input type="checkbox">#5</td>
-                  <td>Hiroto Šimun</td>
-                  <td>2012/01/21</td>
-                  <td>学生</td>
-                  <td><span class="badge badge-success">激活</span></td>
-                  <td>
-                    <button class="btn btn-info active" type="button" aria-pressed="true"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
-                    <button class="btn btn-danger active" type="button" aria-pressed="true"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
+                    <button class="btn btn-info active" type="button" aria-pressed="true" data-toggle="modal" data-target="#primaryModal"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
+                    <button class="btn btn-danger active" type="button" aria-pressed="true" data-toggle="modal" data-target="#dangerModal"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
                   </td>
                 </tr>
                 </tbody>
@@ -770,6 +726,89 @@
         </div>
       </aside>
     </div>
+    <!-- /.modal-->
+    <div class="modal fade" id="primaryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">修改信息</h4>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">用户名</label>
+                <div class="col-md-9">
+                  <input class="form-control" id="text-input" type="text" name="text-input" placeholder="请输入您的用户名">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="select1">角色</label>
+                <div class="col-md-9">
+                  <select class="form-control" id="select1" name="select1">
+                    <option value="0">请选择角色</option>
+                    <option value="1">学生</option>
+                    <option value="2">老师</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label">状态</label>
+                <div class="col-md-9 col-form-label">
+                  <div class="form-check form-check-inline mr-1">
+                    <input class="form-check-input" id="inline-radio1" type="radio" value="option1" name="inline-radios">
+                    <label class="form-check-label" for="inline-radio1">已激活</label>
+                  </div>
+                  <div class="form-check form-check-inline mr-1">
+                    <input class="form-check-input" id="inline-radio2" type="radio" value="option2" name="inline-radios">
+                    <label class="form-check-label" for="inline-radio2">未激活</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">注册时间</label>
+                <div class="col-md-9">
+                  <input class="form-control"  type="date" >
+                </div>
+              </div>
+            </form>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+              <button class="btn btn-primary" type="button">保存</button>
+            </div>
+          </div>
+        <!-- /.modal-content-->
+      </div>
+      <!-- /.modal-dialog-->
+      </div>
+    </div>
+
+
+    <!-- /.modal-->
+    <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-danger" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">删除信息</h4>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>您确定删除此信息吗？</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+            <button class="btn btn-danger" type="button">删除</button>
+          </div>
+        </div>
+        <!-- /.modal-content-->
+      </div>
+      <!-- /.modal-dialog-->
+    </div>
+
 
     <footer class="app-footer">
       <div>
@@ -781,6 +820,23 @@
         <a href="https://coreui.io">CoreUI</a>
       </div>
     </footer>
+
+    <script>
+      new Vue({
+          el:'#tableData',
+          data:{
+              items:[
+                  {username:"卢大雨",date:"2018/10/01",role:"学生",status:"激活"},
+                  {username:"谢飞燕",date:"2018/10/02",role:"老师",status:"未激活"},
+                  {username:"张三",date:"2018/10/03",role:"学生",status:"激活"},
+                  {username:"李四",date:"2018/10/04",role:"老师",status:"未激活"},
+                  {username:"赵武",date:"2018/10/05",role:"学生",status:"激活"},
+                  {username:"王山",date:"2018/10/06",role:"学生",status:"激活"},
+              ]
+          }
+      })
+    </script>
+
     <!-- CoreUI and necessary plugins-->
     <script src="vendors/jquery/js/jquery.min.js"></script>
     <script src="vendors/popper.js/js/popper.min.js"></script>
