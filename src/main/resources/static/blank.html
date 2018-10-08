@@ -386,7 +386,7 @@
                   <td>{{item.role}}</td>
                   <td><span class="badge badge-success">{{item.status}}</span></td>
                   <td>
-                    <button class="btn btn-info active" type="button" aria-pressed="true" data-toggle="modal" data-target="#primaryModal"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
+                    <button class="btn btn-info active" :name="index" @click="fullData(index)" type="button" aria-pressed="true" data-toggle="modal" data-target="#primaryModal"><i class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑</button>
                     <button class="btn btn-danger active" type="button" aria-pressed="true" data-toggle="modal" data-target="#dangerModal"><i class="fa fa-remove" style="padding-right: 5px"></i>删除</button>
                   </td>
                 </tr>
@@ -736,21 +736,21 @@
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" id="modalTable">
             <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
               <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="text-input">用户名</label>
                 <div class="col-md-9">
-                  <input class="form-control" id="text-input" type="text" name="text-input" placeholder="请输入您的用户名">
+                  <input class="form-control" id="text-input" type="text" name="text-input" :value="modalData.username" placeholder="请输入您的用户名">
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="select1">角色</label>
                 <div class="col-md-9">
-                  <select class="form-control" id="select1" name="select1">
-                    <option value="0">请选择角色</option>
-                    <option value="1">学生</option>
-                    <option value="2">老师</option>
+                  <select class="form-control" id="select1" name="select1" >
+                    <option  value="0" >请选择角色</option>
+                    <option  value="1" :selected="modalData.role=='学生'?true:false" >学生</option>
+                    <option value="2" :selected="modalData.role=='老师'?true:false">老师</option>
                   </select>
                 </div>
               </div>
@@ -758,11 +758,11 @@
                 <label class="col-md-3 col-form-label">状态</label>
                 <div class="col-md-9 col-form-label">
                   <div class="form-check form-check-inline mr-1">
-                    <input class="form-check-input" id="inline-radio1" type="radio" value="option1" name="inline-radios">
+                    <input class="form-check-input" :checked="modalData.status=='激活'?true:false" id="inline-radio1" type="radio" value="option1" name="inline-radios">
                     <label class="form-check-label" for="inline-radio1">已激活</label>
                   </div>
                   <div class="form-check form-check-inline mr-1">
-                    <input class="form-check-input" id="inline-radio2" type="radio" value="option2" name="inline-radios">
+                    <input class="form-check-input" :checked="modalData.status=='未激活'?true:false" id="inline-radio2" type="radio" value="option2" name="inline-radios">
                     <label class="form-check-label" for="inline-radio2">未激活</label>
                   </div>
                 </div>
@@ -770,7 +770,7 @@
               <div class="form-group row">
                 <label class="col-md-3 col-form-label" for="text-input">注册时间</label>
                 <div class="col-md-9">
-                  <input class="form-control"  type="date" >
+                  <input class="form-control"  type="datetime"  :value="modalData.date" >
                 </div>
               </div>
             </form>
@@ -779,9 +779,9 @@
               <button class="btn btn-primary" type="button">保存</button>
             </div>
           </div>
-        <!-- /.modal-content-->
-      </div>
-      <!-- /.modal-dialog-->
+          <!-- /.modal-content-->
+        </div>
+        <!-- /.modal-dialog-->
       </div>
     </div>
 
@@ -822,7 +822,13 @@
     </footer>
 
     <script>
-      new Vue({
+        var modalTable=new Vue({
+            el:'#modalTable',
+            data:{
+                modalData:""
+            }
+        });
+      var tableData=new Vue({
           el:'#tableData',
           data:{
               items:[
@@ -831,10 +837,16 @@
                   {username:"张三",date:"2018/10/03",role:"学生",status:"激活"},
                   {username:"李四",date:"2018/10/04",role:"老师",status:"未激活"},
                   {username:"赵武",date:"2018/10/05",role:"学生",status:"激活"},
-                  {username:"王山",date:"2018/10/06",role:"学生",status:"激活"},
+                  {username:"王山",date:"2018/10/06",role:"学生",status:"激活"}
               ]
+          },
+          methods:{
+              fullData:function (index) {
+                  modalTable.$data.modalData= tableData.$data.items[index]
+              }
           }
-      })
+      });
+
     </script>
 
     <!-- CoreUI and necessary plugins-->
