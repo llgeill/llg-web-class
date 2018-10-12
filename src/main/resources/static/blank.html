@@ -388,7 +388,7 @@
                             <td>{{item.username}}</td>
                             <td>{{item.date}}</td>
                             <td>{{item.role}}</td>
-                            <td><span class="badge badge-success">{{item.status}}</span></td>
+                            <td><span  :class="['badge',item.status=='已激活' ? 'badge-success' : 'badge-secondary']">{{item.status}}</span></td>
                             <td>
                                 <button class="btn btn-info active" @click="fillData(index)" type="button"
                                         aria-pressed="true" data-toggle="modal" data-target="#primaryModal"><i
@@ -791,10 +791,10 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="select1">角色</label>
                         <div class="col-md-9">
-                            <select class="form-control" id="select1" name="select1">
-                                <option value="0">请选择角色</option>
-                                <option :value="modalData.role" :selected="modalData.role=='学生'?true:false">学生</option>
-                                <option :value="modalData.role" :selected="modalData.role=='老师'?true:false">老师</option>
+                            <select class="form-control"  v-model="modalData.role" id="select1" name="select1">
+                                <option  disabled>请选择角色</option>
+                                <option>学生</option>
+                                <option>老师</option>
                             </select>
                         </div>
                     </div>
@@ -802,13 +802,13 @@
                         <label class="col-md-3 col-form-label">状态</label>
                         <div class="col-md-9 col-form-label">
                             <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" :checked="modalData.status=='激活'?true:false"
-                                       id="inline-radio1" type="radio" :value="modalData.status" name="inline-radios">
+                                <input class="form-check-input"
+                                       id="inline-radio1" type="radio" value="已激活" v-model="modalData.status" name="inline-radios">
                                 <label class="form-check-label" for="inline-radio1">已激活</label>
                             </div>
                             <div class="form-check form-check-inline mr-1">
-                                <input class="form-check-input" :checked="modalData.status=='未激活'?true:false"
-                                       id="inline-radio2" type="radio" :value="modalData.status" name="inline-radios">
+                                <input class="form-check-input"
+                                       id="inline-radio2" type="radio" value="未激活" v-model="modalData.status" name="inline-radios">
                                 <label class="form-check-label" for="inline-radio2">未激活</label>
                             </div>
                         </div>
@@ -816,7 +816,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="text-input">注册时间</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="date" :value="modalData.date">
+                            <input class="form-control" type="date" v-model="modalData.date">
                         </div>
                     </div>
                 </form>
@@ -885,12 +885,12 @@
         el: '#tableData',
         data: {
             items: [
-                {username: "卢大雨", date: "2018-10-01", role: "学生", status: "激活"},
+                {username: "卢大雨", date: "2018-10-01", role: "学生", status: "已激活"},
                 {username: "谢飞燕", date: "2018-10-02", role: "老师", status: "未激活"},
-                {username: "张三", date: "2018-10-03", role: "学生", status: "激活"},
+                {username: "张三", date: "2018-10-03", role: "学生", status: "已激活"},
                 {username: "李四", date: "2018-10-04", role: "老师", status: "未激活"},
-                {username: "赵武", date: "2018-10-05", role: "学生", status: "激活"},
-                {username: "王山", date: "2018-10-06", role: "学生", status: "激活"}
+                {username: "赵武", date: "2018-10-05", role: "学生", status: "已激活"},
+                {username: "王山", date: "2018-10-06", role: "学生", status: "已激活"}
             ]
         },
         methods: {
