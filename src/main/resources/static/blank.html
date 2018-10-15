@@ -361,17 +361,17 @@
         <div class="container-fluid">
             <div class="animated fadeIn"></div>
         </div>
-        <div class="col-lg-8 container">
-            <div class="card">
+        <div class="col-lg-8 container" id="tableData">
+            <div class="card" >
                 <div class="card-header">
                     <i class="fa fa-align-justify"></i> 信息管理
                     <i class="icon-trash icons font-1xl  float-right" style="margin-right: 5px"><span
                             style="padding-left: 8px;color: gray">删除</span></i>
-                    <i class="icon-plus icons font-1xl   float-right"><span
+                    <i class="icon-plus icons font-1xl   float-right" data-toggle="modal" data-target="#primaryModal" @click="emptyData('add')" ><span
                             style="padding-left: 8px;color: gray">新增</span></i>
                 </div>
                 <div class="card-body">
-                    <table class="table table-responsive-sm table-bordered" id="tableData">
+                    <table class="table table-responsive-sm table-bordered" >
                         <thead>
                         <tr>
                             <th><input type="checkbox"></th>
@@ -382,7 +382,7 @@
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody v-for="(item, index) in items">
+                        <tbody v-for="(item, index) in items" >
                         <tr>
                             <td><input type="checkbox">#{{index+1}}</td>
                             <td>{{item.username}}</td>
@@ -390,11 +390,11 @@
                             <td>{{item.role}}</td>
                             <td><span  :class="['badge',item.status=='已激活' ? 'badge-success' : 'badge-secondary']">{{item.status}}</span></td>
                             <td>
-                                <button class="btn btn-info active" @click="fillData(index)" type="button"
+                                <button class="btn btn-info active" @click="fillData(index,'update')" type="button"
                                         aria-pressed="true" data-toggle="modal" data-target="#primaryModal"><i
                                         class="icons font-1xl  cui-note" style="padding-right: 5px"></i>编辑
                                 </button>
-                                <button class="btn btn-danger active" type="button" aria-pressed="true"
+                                <button class="btn btn-danger active" @click="deleteData(index)" type="button" aria-pressed="true"
                                         data-toggle="modal" data-target="#dangerModal"><i class="fa fa-remove"
                                                                                           style="padding-right: 5px"></i>删除
                                 </button>
@@ -847,7 +847,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
-                <button class="btn btn-danger" type="button">删除</button>
+                <button class="btn btn-danger" @click="save" type="button">删除</button>
             </div>
         </div>
         <!-- /.modal-content-->
@@ -868,19 +868,46 @@
 </footer>
 
 <script>
+    var dangerModal=new Vue({
+       el:'#dangerModal',
+       data:{
+           index:-1
+       },
+        methods:{
+           save:function () {
+               tableData.items.splice(dangerModal.index, 1);
+               $('#dangerModal').modal('hide')
+           }
+        }
+    });
+    /**
+     * 信息编辑框，包括增加信息和修改信息
+     * @type {Vue} 模态框类型
+     */
     var modalTable = new Vue({
         el: '#modalTable',
         data: {
-            modalData: "",
-            index: -1
+            modalData: {},
+            index: -1,
+            title:'',
+            type:''
         },
         methods: {
             save: function (index) {
-                tableData.$data.items.splice(index, 1, modalTable.$data.modalData);
+                if(modalTable.type=='update') {
+                    tableData.items.splice(index, 1, modalTable.modalData);
+                } else if(modalTable.type=='add') {
+                    tableData.items.push(modalTable.modalData);
+                }
                 $('#primaryModal').modal('hide')
             }
         }
     });
+
+    /**
+     * 用户信息模型
+     * @type {Vue}
+     */
     var tableData = new Vue({
         el: '#tableData',
         data: {
@@ -894,11 +921,22 @@
             ]
         },
         methods: {
-            fillData: function (index, type) {
+            fillData: function (index,type) {
                 //使用string特性达到克隆json对象的目的
-                modalTable.$data.modalData = JSON.parse(JSON.stringify(tableData.$data.items[index]));
-                modalTable.$data.index = index;
+                modalTable.modalData = JSON.parse(JSON.stringify(tableData.items[index]));
+                modalTable.title='修改信息';
+                modalTable.index = index;
+                modalTable.type=type;
+            },
+            emptyData:function (type) {
+                modalTable.modalData ={};
+                modalTable.title='增加信息';
+                modalTable.type=type;
+            },
+            deleteData:function (index) {
+                dangerModal.index = index;
             }
+
         }
     });
 
