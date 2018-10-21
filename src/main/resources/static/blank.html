@@ -769,29 +769,32 @@
         </div>
     </aside>
 </div>
-<!-- /.modal-->
+<!-- /.数据添加和修改模态框-->
 <div class="modal fade" id="primaryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">修改信息</h4>
+                <h4 class="modal-title">{{title}}</h4>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body" id="modalTable">
-                <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+                <form class="form-horizontal needs-validation" action="" method="post" enctype="multipart/form-data">
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="text-input">用户名</label>
                         <div class="col-md-9">
                             <input class="form-control" id="text-input" type="text" name="text-input"
-                                   v-model.lazy="modalData.username" placeholder="请输入您的用户名">
+                                   v-model.lazy="modalData.username" placeholder="请输入您的用户名" required>
+                            <div class="invalid-feedback">
+                                用户名不能为空！
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="select1">角色</label>
                         <div class="col-md-9">
-                            <select class="form-control"  v-model="modalData.role" id="select1" name="select1">
+                            <select class="form-control"  v-model="modalData.role" id="select1" name="select1"  required>
                                 <option  disabled>请选择角色</option>
                                 <option>学生</option>
                                 <option>老师</option>
@@ -803,12 +806,12 @@
                         <div class="col-md-9 col-form-label">
                             <div class="form-check form-check-inline mr-1">
                                 <input class="form-check-input"
-                                       id="inline-radio1" type="radio" value="已激活" v-model="modalData.status" name="inline-radios">
+                                       id="inline-radio1" type="radio"  value="已激活" v-model="modalData.status" name="inline-radios">
                                 <label class="form-check-label" for="inline-radio1">已激活</label>
                             </div>
                             <div class="form-check form-check-inline mr-1">
                                 <input class="form-check-input"
-                                       id="inline-radio2" type="radio" value="未激活" v-model="modalData.status" name="inline-radios">
+                                       id="inline-radio2" type="radio" checked value="未激活" v-model="modalData.status" name="inline-radios">
                                 <label class="form-check-label" for="inline-radio2">未激活</label>
                             </div>
                         </div>
@@ -816,7 +819,7 @@
                     <div class="form-group row">
                         <label class="col-md-3 col-form-label" for="text-input">注册时间</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="date" v-model="modalData.date">
+                            <input class="form-control" type="date" v-model="modalData.date"  required>
                         </div>
                     </div>
                 </form>
@@ -830,9 +833,7 @@
         <!-- /.modal-dialog-->
     </div>
 </div>
-
-
-<!-- /.modal-->
+<!-- /.删除模态框-->
 <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-danger" role="document">
         <div class="modal-content">
@@ -854,8 +855,6 @@
     </div>
     <!-- /.modal-dialog-->
 </div>
-
-
 <footer class="app-footer">
     <div>
         <a href="https://coreui.io">CoreUI</a>
@@ -868,6 +867,10 @@
 </footer>
 
 <script>
+
+    /**
+     * 删除模态框
+     */
     var dangerModal=new Vue({
        el:'#dangerModal',
        data:{
@@ -885,7 +888,7 @@
      * @type {Vue} 模态框类型
      */
     var modalTable = new Vue({
-        el: '#modalTable',
+        el: '#primaryModal',
         data: {
             modalData: {},
             index: -1,
@@ -894,12 +897,20 @@
         },
         methods: {
             save: function (index) {
-                if(modalTable.type=='update') {
-                    tableData.items.splice(index, 1, modalTable.modalData);
-                } else if(modalTable.type=='add') {
-                    tableData.items.push(modalTable.modalData);
+                //校验表单
+                var forms = document.getElementsByClassName('needs-validation');
+                if (forms[0].checkValidity() === true) {
+                    if(modalTable.type=='update') {
+                        tableData.items.splice(index, 1, modalTable.modalData);
+                    } else if(modalTable.type=='add') {
+                        tableData.items.push(modalTable.modalData);
+                    }
+                    $('#primaryModal').modal('hide');
+                }else{
+                    forms[0].classList.add('was-validated');
                 }
-                $('#primaryModal').modal('hide')
+
+
             }
         }
     });
@@ -920,28 +931,43 @@
                 {username: "王山", date: "2018-10-06", role: "学生", status: "已激活"}
             ]
         },
+        computed: {
+            today: function () {
+                // `this` 指向 vm 实例
+                return new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDay()
+            }
+        },
         methods: {
             fillData: function (index,type) {
                 //使用string特性达到克隆json对象的目的
-                modalTable.modalData = JSON.parse(JSON.stringify(tableData.items[index]));
-                modalTable.title='修改信息';
-                modalTable.index = index;
-                modalTable.type=type;
+                this.init(JSON.parse(JSON.stringify(tableData.items[index])),type,'修改信息',index);
             },
             emptyData:function (type) {
-                modalTable.modalData ={};
-                modalTable.title='增加信息';
-                modalTable.type=type;
+                this.init({username: null, date: null, role: "学生", status: "未激活"},type,'增加信息');
             },
             deleteData:function (index) {
                 dangerModal.index = index;
+            },
+            /**
+             * 填充模态框的基础操作
+             * @param modalData 模型数据
+             * @param type 模态框类别
+             * @param title 模态框标题
+             * @param index 修改数据的下标
+             */
+            init:function (modalData,type,title,index) {
+                //初始化校验样式
+                document.getElementsByClassName('needs-validation')[0].classList.remove('was-validated');
+                modalTable.modalData = modalData;
+                modalTable.title=title;
+                modalTable.index = index;
+                modalTable.type=type;
             }
 
         }
     });
 
 </script>
-
 <!-- CoreUI and necessary plugins-->
 <script src="vendors/jquery/js/jquery.min.js"></script>
 <script src="vendors/popper.js/js/popper.min.js"></script>

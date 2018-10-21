@@ -4,98 +4,59 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 </head>
 <body >
-<div id="todo-list-example">
-    <!-- 阻止单击事件继续传播 -->
-    <a v-on:click.stop="doThis"></a>
-
-    <!-- 提交事件不再重载页面 -->
-    <form v-on:submit.prevent="onSubmit"></form>
-
-    <!-- 修饰符可以串联 -->
-    <a v-on:click.stop.prevent="doThat"></a>
-
-    <!-- 只有修饰符 -->
-    <form v-on:submit.prevent></form>
-
-    <!-- 添加事件监听器时使用事件捕获模式 -->
-    <!-- 即元素自身触发的事件先在此处理，然后才交由内部元素进行处理 -->
-    <div v-on:click.capture="doThis">...</div>
-
-    <!-- 只当在 event.target 是当前元素自身时触发处理函数 -->
-    <!-- 即事件不是从内部元素触发的 -->
-    <div v-on:click.self="doThat">...</div>
-    <form v-on:submit.prevent="addNewTodo">
-        <label for="new-todo">Add a todo</label>
-        <input
-                v-model="newTodoText"
-                id="new-todo"
-                placeholder="E.g. Feed the cat"
-        >
-        <button>Add</button>
-    </form>
-
-        <ul
-                is="todo-item"
-                v-for="(todo, index) in todos"
-                v-bind:key="todo.id"
-                v-bind:title="todo.title"
-                v-on:remove="todos.splice(index, 1)"
-        ></ul>
 
 
+<div id="app">
+    <h1>Hello App!</h1>
+    <p>
+        <!-- 使用 router-link 组件来导航. -->
+        <!-- 通过传入 `to` 属性指定链接. -->
+        <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+        <router-link to="/foo">Go to Foo</router-link>
+        <router-link to="/bar">Go to Bar</router-link>
+    </p>
+    <!-- 路由出口 -->
+    <!-- 路由匹配到的组件将渲染在这里 -->
+    <router-view></router-view>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 <script>
-    Vue.component('todo-item', {
-        template: '\
-    <li>\
-      {{ title }}\
-      <button v-on:click="$emit(\'remove\')">Remove</button>\
-    </li>\
-  ',
-        props: ['title']
+    // 0. 如果使用模块化机制编程，导入Vue和VueRouter，要调用 Vue.use(VueRouter)
+
+    // 1. 定义 (路由) 组件。
+    // 可以从其他文件 import 进来
+    const Foo = { template: '<div>foo</div>' };
+    const Bar = { template: '<div>bar</div>' };
+
+    // 2. 定义路由
+    // 每个路由应该映射一个组件。 其中"component" 可以是
+    // 通过 Vue.extend() 创建的组件构造器，
+    // 或者，只是一个组件配置对象。
+    // 我们晚点再讨论嵌套路由。
+    const routes = [
+        { path: '/foo', component: Foo },
+        { path: '/bar', component: Bar }
+    ]
+
+    // 3. 创建 router 实例，然后传 `routes` 配置
+    // 你还可以传别的配置参数, 不过先这么简单着吧。
+    const router = new VueRouter({
+        routes // (缩写) 相当于 routes: routes
     })
 
-    new Vue({
-        el: '#todo-list-example',
-        data: {
-            newTodoText: '',
-            todos: [
-                {
-                    id: 1,
-                    title: 'Do the dishes',
-                },
-                {
-                    id: 2,
-                    title: 'Take out the trash',
-                },
-                {
-                    id: 3,
-                    title: 'Mow the lawn'
-                }
-            ],
-            nextTodoId: 4
-        },
-        methods: {
-            addNewTodo: function () {
-                this.todos.push({
-                    id: this.nextTodoId++,
-                    title: this.newTodoText
-                }),
-                this.newTodoText = ''
-            },
-            doThis:function () {
-                alert('doThis')
-            },
-            doThat:function () {
-                alert('doThat')
-            },
-        }
-    })
+    // 4. 创建和挂载根实例。
+    // 记得要通过 router 配置参数注入路由，
+    // 从而让整个应用都有路由功能
+    const app = new Vue({
+        router
+    }).$mount('#app')
+
+    // 现在，应用已经启动了！
 </script>
 </body>
 </html>
